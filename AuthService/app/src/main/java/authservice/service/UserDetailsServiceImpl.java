@@ -7,7 +7,7 @@ import authservice.repository.UserRepository;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 
-import org.springframework.beans.factory.annotation.AutoWired;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -48,13 +48,13 @@ public class UserDetailsServiceImpl implements UserDetailsService{
 	}
 
 	public String signupUser(UserInfoDto userInfoDto){
-		userInfoDto.setPassoword(passwordEncoder.encode(userInfoDto.getPassword()));
+		userInfoDto.setPassword(passwordEncoder.encode(userInfoDto.getPassword()));
 		if (Objects.nonNull(checkIfUserAlreadyExists(userInfoDto))){
 			return null;
 		}
 
 		String userId = UUID.randomUUID().toString();
-		UserInfo userInfo = new UserInfo(userId, userInfoDto.getUsername(), userInfoDto.getPassowrd(), new HashSet<>());
+		UserInfo userInfo = new UserInfo(userId, userInfoDto.getUsername(), userInfoDto.getPassword(), new HashSet<>());
 		userRepository.save(userInfo);
 		return userId;
 	}
