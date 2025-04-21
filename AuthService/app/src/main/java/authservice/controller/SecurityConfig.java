@@ -3,6 +3,7 @@ package authservice.controller;
 import authservice.auth.JwtAuthFilter;
 import authservice.repository.UserRepository;
 import authservice.service.UserDetailsServiceImpl;
+import authservice.eventProducer.UserInfoProducer;
 
 import lombok.Data;
 
@@ -36,10 +37,13 @@ public class SecurityConfig {
 	@Autowired
 	private final UserDetailsServiceImpl userDetailsServiceImpl;
 
+	@Autowired
+	private final UserInfoProducer userInfoProducer;
+
 	@Bean
 	@Autowired
-	public UserDetailsService userDetailsService(UserRepository userRepository, PasswordEncoder passwordEncoder){
-		return new UserDetailsServiceImpl(userRepository, passwordEncoder);
+	public UserDetailsService userDetailsService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserInfoProducer userInfoProducer){
+		return new UserDetailsServiceImpl(userRepository, passwordEncoder, userInfoProducer);
 	}
 
 	@Primary
