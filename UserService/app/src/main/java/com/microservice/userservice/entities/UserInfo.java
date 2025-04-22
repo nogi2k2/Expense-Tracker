@@ -16,6 +16,7 @@ import lombok.NonNull;
 
 @Entity
 @Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")

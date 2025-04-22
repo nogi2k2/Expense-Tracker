@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class UserServiceConfig {
 
     @Bean
-    public ObjectMapper objectMapperInti(){
+    public ObjectMapper objectMapperInit(){
         return new ObjectMapper();
     }
 }
