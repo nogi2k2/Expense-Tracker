@@ -21,7 +21,8 @@ public class AuthServiceConsumer {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "${spring.kafka.topic-json.name}", groupId = "${spring.kafka.consumer.group-id}")                               
+    // @KafkaListener(topics = "${spring.kafka.topic-json.name}", groupId = "${spring.kafka.consumer.group-id}")  
+    @KafkaListener(topics = "user_service", groupId = "${spring.kafka.consumer.group-id}")                             
     public void listen(UserInfoDto userInfoDto){
         try{
             userService.createOrUpdateUser(userInfoDto);

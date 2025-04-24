@@ -60,6 +60,7 @@ public class UserDetailsServiceImpl implements UserDetailsService{
 		String userId = UUID.randomUUID().toString();
 		UserInfo userInfo = new UserInfo(userId, userInfoDto.getUsername(), userInfoDto.getPassword(), new HashSet<>());
 		userRepository.save(userInfo);
+		userInfoDto.setUserId(userId);
 		userInfoProducer.sendToKafka(userInfoDto);
 		return userId;
 	}
