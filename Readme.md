@@ -136,7 +136,7 @@ This service follows a microservice-based architecture, designed to scale and in
 **A POST request sent from Postman to AuthService for user registration, receiving the authentication tokens (Access and Refresh Tokens) as a response.**
 
 <p align="center">
-<<img src="readme_refs/postman_signup.png" width="700" alt="PostMan SignUp">
+<img src="readme_refs/postman_signup.png" width="700" alt="PostMan SignUp">
 </p>
 
 ### 🚀 Bringing up Containers and Setting up DB
