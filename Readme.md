@@ -255,7 +255,7 @@ This service follows a microservice-based architecture, designed to scale and in
 
 1. **Clone the repository**
 ```
-    $ git clone https://github.com/nogi2k2/Whispr.git](https://github.com/nogi2k2/Expense-Tracker.git
+    $ git clone https://github.com/nogi2k2/Expense-Tracker.git
 ```
 
 2. **Navigate into the project directory**
