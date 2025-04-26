@@ -1,6 +1,7 @@
 package authservice.eventProducer;
 
 import authservice.model.UserInfoDto;
+import authservice.eventProducer.UserInfoEvent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,8 +26,8 @@ public class UserInfoProducer {
 		this.kafkaTemplate = kafkaTemplate;
 	}
 
-	public void sendToKafka(UserInfoDto eventData){
-		Message<UserInfoDto> message = MessageBuilder.withPayload(eventData).setHeader(KafkaHeaders.TOPIC, "user_service").build();
+	public void sendToKafka(UserInfoEvent eventData){
+		Message<UserInfoEvent> message = MessageBuilder.withPayload(eventData).setHeader(KafkaHeaders.TOPIC, "user_service").build();
 		kafkaTemplate.send(message);
 	}
 }
