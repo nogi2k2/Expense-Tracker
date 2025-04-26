@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @PostMapping("/user/v1/createUpdate")
-    public ResponseEntity<UserInfoDto> createUpdateUser(@RequestBody UserInfoDto userInfoDto){
+    public ResponseEntity<UserInfoDto> createUpdateUser(UserInfoDto userInfoDto){
         try{
             return new ResponseEntity<>(userService.createOrUpdateUser(userInfoDto), HttpStatus.OK);
         }catch (Exception ex){
