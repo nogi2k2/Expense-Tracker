@@ -48,10 +48,9 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = 'org.example.ServiceApplication'
+    mainClass = 'com.expense.service.ServiceApplication'
 }
 
 tasks.withType(Test) {
     enabled = false
 }
-

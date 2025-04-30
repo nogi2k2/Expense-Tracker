@@ -20,7 +20,7 @@ public class ExpenseConsumer {
         this.expenseService = expenseService;
     }
 
-    @KafkaListener(topics = "${spring.kafka.topic.json-name}", groupId="${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "${spring.kafka.topic-json.name}", groupId="${spring.kafka.consumer.group-id}")
     public void consume(ExpenseDto expenseDto){
         try{
             expenseService.createExpense(expenseDto);

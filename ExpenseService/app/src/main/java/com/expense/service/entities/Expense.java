@@ -48,7 +48,7 @@ public class Expense {
     private String merchant;
 
     @Column(name = "currency")
-    private String scurrency;
+    private String currency;
 
     @Column(name = "created_at")
     @JsonProperty(value = "created_at")
