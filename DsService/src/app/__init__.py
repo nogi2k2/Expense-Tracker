@@ -14,9 +14,12 @@ kafkaProducer = KafkaProducer(bootstrap_servers=['192.168.84.130:9092'],
 def handle_message():
     data = request.json.get('message')
     result = messageService.process_message(data)
-    serialized = result.json()
-    kafkaProducer.send('expense_service', serialized)
-    return jsonify(result)
+    if result is not None:
+        serialized = result.json()
+        kafkaProducer.send('expense_service', serialized)
+        return jsonify(result.dict())
+    else:
+        return jsonify({"error": "Invalid message format"}), 400
 
 if (__name__ == "__main__"):
     app.run(host="localhost", port = 8000, debug=True)
