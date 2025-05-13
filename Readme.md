@@ -1,17 +1,18 @@
-# Distributed Auth & User Service
+# Expense Tracker App
 
-A distributed authentication and user management system built with Spring Boot, Kafka, and MySQL, emphasizing stateless security, event-driven architecture, and modular service separation. This project demonstrates how secure authentication and scalable user operations can be orchestrated across services in a microservice ecosystem.
+A distributed, microservices-based **Expense Tracker** built using **Spring Boot**, **Kafka**, **MySQL**, and **Docker**, designed to scale securely and operate efficiently. The system is modular, featuring stateless authentication, event-driven communication, and a containerized deployment workflow — enabling users to track expenses and manage profiles in a decoupled yet cohesive setup.
 
-> ⚙️ **Note:** While this service functions independently, it has been designed to integrate seamlessly into a larger modular system — such as an expense tracker.
+> ⚙️ **Note:** While these services function independently, they have been designed to integrate seamlessly into a larger modular system — an Expense Tracker.
 
 ---
 
 ## 📋 Features
 
-- 🔐 **Stateless Authentication:** A secure authentication system utilizing JWT tokens with Spring Security for stateless user sessions.
+- 🔐 **Stateless Authentication:** A secure authentication system utilizing JWT tokens with Spring Security for stateless user sessions, also includes refresh token support.
 - 📈 **Scalable Event-Driven Design:** Kafka is used to decouple the authentication and user management services, enabling efficient communication via events.
-- 🧩 **Microservices Architecture:** The system is built to be scalable, where different services (Auth and User) run independently and communicate asynchronously.
-- 📊 **User Data Persistence:** Uses MySQL as the database for storing user credentials, and other user-related information. 
+- 🧩 **Microservices Architecture:** The system is built to be scalable, where different services (Auth, User, Expense and Data Science) run independently and communicate asynchronously. Each service manages its own schema, ensuring seperation of concerns.
+- 📊 **User Data Persistence:** Uses MySQL to persist user credentials and profile information, and other user-related information. 
+- 💸 **Expense Management:** A dedicated Ledger Service that allows users to Add, Update, Delete, View and Categorize Expenses.
 - 🧑‍💻 **Dockerized Environment:** The application is containerized using Docker, ensuring smooth deployment and portability across environments.
 
 ---
@@ -23,10 +24,11 @@ A distributed authentication and user management system built with Spring Boot, 
 - **Spring Security & JWT** – GUI components and event-driven interface
 - **MySQL** – Relational database to store user credentials and other data
 - **Kafka** – Asynchronous communication between the microservices
-- **Docker** – Containerizing the application for easy deployment
+- **Docker & Docker Compose** – Containerization and orchestration of all microservices for local and production environments
 - **JPA / Hibernate** – ORM for interacting with the MySQL database
-- **Gradle** - Build Automation
-- **Git** – Version control 
+- **Gradle** - Build automation and dependency management
+- **Postman** – API testing with organized collections for each service
+- **Git** – Version control for collaborative development
 
 ---
 
@@ -96,6 +98,42 @@ A distributed authentication and user management system built with Spring Boot, 
 |    |    |   |── resources
 |    |    |   |       |── application.properties
 
+│── ExpenseService
+|    │── app 
+|    |    │── src
+|    |    |   │── main/java/com/service
+|    |    |   |         │── consumer
+|    |    |   |         |    │── ExpenseConsumer.java
+|    |    |   |         |    │── ExpenseDeserializer.java
+|    |    |   |         │── controller
+|    |    |   |         |    │── ExpenseController.java
+|    |    |   |         │── dto
+|    |    |   |         |    │── ExpenseDto.java
+|    |    |   |         │── entities
+|    |    |   |         |    │── Expense.java
+|    |    |   |         │── repository
+|    |    |   |         |    │── ExpenseRepository.java
+|    |    |   |         │── service
+|    |    |   |         |    │── ExpenseService.java
+
+|    |    |   |         │── ServiceApplication.java
+|    |    |   |── resources
+|    |    |   |       |── application.properties
+
+│── DsService
+|    │── setup.py
+|    │── src 
+|    |    │── app
+|    |    |   │── service
+|    |    |   |     │── Expense.py
+|    |    |   |     │── llmService.py
+|    |    |   |     │── messageService.py
+|    |    |   │── utils
+|    |    |   |     │── __init__.py
+|    |    |   |     │── messageUtils.py
+|    |    |   │── __init__.py
+|    |    |   │── config.py 
+
 ```
 
 ---
@@ -122,6 +160,28 @@ This service follows a microservice-based architecture, designed to scale and in
 - Provides APIs for accessing and updating user profile data.
 
 
+### 💸 Expense Service
+
+- Manages creation, retrieval, and deletion of individual user expenses.
+
+- Each expense is associated with a user and includes metadata like amount, merchant, and currency.
+
+- Listens to Kafka events published by the Data Science Service containing structured expense data extracted from bank SMS messages.
+
+- Upon receiving an event, the service validates and persists the parsed expense into the user's financial ledger.
+
+
+### 🧠 Data Science Service
+
+- Parses unstructured bank SMS messages into structured expense data using a Large Language Model (LLM).
+
+- Utilizes LangChain to interface with the LLM and enforce a predefined output schema (amount, merchant, currency) for consistent downstream processing.
+
+- After extracting the relevant fields, publishes the structured data as an event to Kafka.
+
+- These events are consumed by the Expense Service to create persistent records in the expense ledger.
+
+
 ### 📬 Inter-Service Communication
 
 - Kafka acts as the communication backbone, allowing asynchronous event-based interaction between the services.
@@ -136,143 +196,85 @@ This service follows a microservice-based architecture, designed to scale and in
 **A POST request sent from Postman to AuthService for user registration, receiving the authentication tokens (Access and Refresh Tokens) as a response.**
 
 <p align="center">
-<img src="readme_refs/postman_signup.png" width="700" alt="PostMan SignUp">
+<img src="readme_refs/postman_signup.jpg" width="700" alt="PostMan SignUp">
+</p>
+
+### 🔐 User Login Request via Postman
+**A POST request to the AuthService to authenticate a user. On valid credentials, the service returns new JWT and refresh tokens.**
+
+<p align="center">
+<img src="readme_refs/postman_login.jpg" width="700" alt="User Login">
+</p>
+
+### 👤 Fetch User Profile (getUser API)
+**A POST request to the UserService with raw JSON containing user details. The service processes this payload to retrieve the corresponding user profile from the database.**
+
+<p align="center">
+<img src="readme_refs/postman_get_user.jpg" width="700" alt="Get User">
+</p>
+
+### 💬 Sending a Bank SMS for Parsing
+**A POST request to the Data Science Service simulating a bank SMS. The service uses an LLM to parse the message and responds with structured expense data in JSON format.**
+
+<p align="center">
+<img src="readme_refs/postman_ds_service_sms_parse.jpg" width="700" alt="Bank SMS Parsing">
+</p>
+
+### 🗃️ AuthService Database
+**MySQL table view for AuthService, showing stored user credentials and token entries post-registration.**
+
+<p align="center">
+<img src="readme_refs/authservice_db.jpg" width="700" alt="AuthService Database">
+</p>
+
+### 🗃️ UserService Database
+**MySQL table view for UserService, displaying user meta data stored independently from the authentication layer.**
+
+<p align="center">
+<img src="readme_refs/userservice_db.jpg" width="700" alt="UserService Database">
+</p>
+
+### 🧾 ExpenseService Database
+**MySQL table view for ExpenseService showing a parsed bank SMS entry that was published by the Data Science Service and persisted as a user expense.**
+
+<p align="center">
+<img src="readme_refs/expenseservice_db.jpg" width="700" alt="ExpenseService Database">
 </p>
 
 ### 🚀 Bringing up Containers and Setting up DB
 **Initializing the docker containers for kafka, mysql and zookeeper services required by the microservices. And setting up the databases.**
 
 <p align="center">
-<img src="readme_refs/docker_sql.png" width="700" alt="Login Window">
-</p>
-
-### 🔐 AuthService Database 
-**CLI output for AuthService, demonstrating the database connection and storage of user credentials, roles and token upon successful registration.**
-
-<p align="center">
-<img src="readme_refs/authservice.png" width="700" alt="Dashboard">
-</p>
-
-### 👤 UserService Database 
-**CLI output for UserService, showing the stored user data and system state after a registration request is processed.**
-
-<p align="center">
-<img src="readme_refs/userservice.png" width="700" alt="Dashboard">
+<img src="readme_refs/docker_sql.jpg" width="700" alt="Login Window">
 </p>
 
 ---
 
 ## 📆 Getting Started
 
-### 📁 Prerequisites
+### 🐳 Spin Up All Services with Docker Compose
 
-(Optional - Install all dependencies and run spring applications manually)
-- **Java JDK 22**  
-- **MySQL Server**
-- **Docker**
-- **Docker Compose**
-- **Kafka**
-- **Zookeeper**
-- **Spring Boot**
-
-(Use gradle to build and run project)
-- **Gradle** 
-
-
----
-
-### Docker compose setup for Kafka Zookeeper and mysql services
-
-1. **Create the following docker-compose.yml file**  
-   ```
-    version: <docker_compose_version>
-    services:
-    zookeeper:
-        image: confluentinc/cp-zookeeper:7.4.4
-        environment:
-        ZOOKEEPER_CLIENT_PORT: <port_zookeeper_client>
-        ZOOKEEPER_TICK_TIME: 2000
-        ports:
-        - <port_mapping_zookeeper>
-
-    kafka:
-        image: confluentinc/cp-kafka:7.4.4
-        depends_on:
-        - zookeeper
-        ports:
-        - <port_mapping_kafka>
-        environment:
-        KAFKA_BROKER_ID: 1
-        KAFKA_ZOOKEEPER_CONNECT: zookeeper:<port_zookeeper>
-        KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://<host_ip_addr>:<port_kafka>
-        KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:<port_kafka>         # Use 0.0.0.0 if not using docker network
-        KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-        KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-        KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-        KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"  # Auto-creates topic when Spring tries to publish
-
-    mysql:
-        image: mysql:8.3.0
-        container_name: mysql-8.3.0
-        restart: always
-        environment:
-        MYSQL_USER: test
-        MYSQL_ROOT_USER: root
-        MYSQL_PASSWORD: 'password'
-        MYSQL_ROOT_PASSWORD: 'password'
-        ports:
-        - <port_mapping_mysql>
-        expose:
-        - <expose port for mysql>
-        volumes:
-        - mysql-db:/var/lib/mysql       # Persists data everytime container is stopped or downed
-
-    volumes:
-    mysql-db:
-        driver: local
+1. **Use the provided docker-compose.yml file to bring up all required services (Kafka, Zookeeper, MySQL)**  
+    ```
+    docker compose -f docker-compose.yml up -d
     ```
    
-2. **Use Docker Compose to bring up the containers**
+2. **Confirm all containers are running:**
     ```
-        docker compose -f <yml for docker compose> up -d    # -d flag is for daemon mode (background process)
-    ```
-
-3. **Login to mysql and setup the databases**
-    ```
-        sudo mysql -h <local_host> -u root -p   # Authenticate root user with password
-    ```
-- Setup the databases
-    ```
-        create database authservice
-        create database userservice
+        docker ps
     ```
 
-**Note** - Set the DB config, credentials and kafka configs in *application.properties** for both the microservices.
-
----
-
-###  🚀 Clone and Run
-
-1. **Clone the repository**
-```
-    $ git clone https://github.com/nogi2k2/Expense-Tracker.git
-```
-
-2. **Navigate into the project directory**
-```
-    $ cd <AuthService> 
-    $ cd <UserService> 
-```
-
-3. **Build and Run the Spring Applications using gradlew.bat**
-- Windows
+3. **Get the container ID for the MySQL container and access it**
     ```
-        $ gradlew.bat build 
-        $ gradlew.bat run 
+    docker exec -it <mysql_container_id> mysql -u root -p
     ```
-- Unix 
+
+4. **Inside the MySQL prompt, create the following databases**
     ```
-        $ ./gradlew build 
-        $ ./gradlew run 
+    CREATE DATABASE authservice;
+    CREATE DATABASE userservice;
+    CREATE DATABASE expenseservice;
+    CREATE DATABASE dsservice;
     ```
+    
 ---
