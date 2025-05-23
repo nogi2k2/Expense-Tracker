@@ -4,9 +4,10 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Home from './src/app/pages/Home';
 import SignUp from './src/app/pages/SignUp';
 import Login from './src/app/pages/Login';
+import Profile from './src/app/pages/Profile';
+import { enableScreens } from 'react-native-screens';
 import { GluestackUIProvider } from '@gluestack-ui/themed';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-
 
 const Stack = createNativeStackNavigator()
 function App(): React.JSX.Element{
@@ -15,7 +16,7 @@ function App(): React.JSX.Element{
             <GlueStackUIProvider>
                 <NavigationContainer>
                     <Stack.Navigator>
-                        <Stack.Screen name = "Login" comoponent = {Login}/>
+                        <Stack.Screen name = "Login" component = {Login}/>
                         <Stack.Screen name = "SignUp" component = {SignUp}/>
                         <Stack.Screen name = "Home" component = {Home}/>
                     </Stack.Navigator>
