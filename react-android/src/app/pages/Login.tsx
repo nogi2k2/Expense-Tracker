@@ -11,43 +11,118 @@ import LoginService from '../api/LoginService';
 const Login = ({navigation}) => {
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
+    const [loggedIn, setLoggedIn] = useState('');
 
     const SignUp = () => {
         navigation.navigate('SignUp', {name: 'SignUp'});
     }
 
-  return (
-    <View style = {styles.loginContainer}>
-      <CustomBox style = {loginBox}>
-        <CustomText style = {styles.heading}>Login</CustomText>
-        <TextInput
-            placeholder="User Name"
-            value={username}
-            onChangeText={text => setUserName(text)}
-            style={styles.textInput}
-            placeholderTextColor="#888"
-        />
-        <TextInput
-            placeholder="Password"
-            value={password}
-            onChangeText={text => setPassword(text)}
-            style={styles.textInput}
-            placeholderTextColor="#888"
-            secureTextEntry
-        />
-      </CustomBox>
-        <Button onPressIn = {() => Login()} style = {styles.button}>
-            <CustomBox style = {buttonBox}>
-                <CustomText style = {{textAlign: 'center'}}>Login</CustomText>
-            </CustomBox>
-        </Button>
-        <Button onPressIn = {() => SignUp()} style = {styles.button}>
-            <CustomBox style = {buttonBox}>
-                <CustomText style = {{textAlign: 'center'}}>SignUp</CustomText>
-            </CustomBox>
-        </Button>
-    </View>
-  );
+    const Login = async () => {
+        const response = await fetch("http://localhost:9898/auth/v1/login", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: JSON.stringify({
+                'username': userName,
+                'password': password,
+            }),
+        });
+        if (response.ok){
+            const data = response.json();
+            await AsyncStorage.setItem('accessToken', data['accessToken']);
+            await AsyncStorage.setItem('token', data['token']);
+            navigation.navigate('Home', {name: 'Home'});
+        }
+    };
+
+    const isLoggedIn = async () => {
+        const accessToken = await AsyncStorage.getItem('accessToken');
+        const response = await fetch('http://localhost:9898/ping', {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + accessToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        return response.ok;
+    }
+
+    const refreshToken = async ()=> {
+        const refreshToken = await AsyncStorage.getItem('token');
+        const response = await fetch("http://localhost:9898/auth/v1/refreshToken", {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Conten-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: JSON.stringify({
+                token: refreshToken,
+            }),
+        });
+
+        if (response.ok){
+            const data = await response.json();
+            await AsyncStorage.setItem('accessToken', data['accessToken']);
+            await AsyncStorage.setItem('token', data['token']);
+        }
+        return response.ok;
+    };
+
+    useEffect(() => {
+        const handleLogin = async () => {
+            const loggedin = await isLoggedIn();
+            setLoggedIn(loggedin);
+            if (loggedIn){
+                navigation.navigate('Home', {name: 'Home'});
+            }else{
+                const refreshed = await refreshToken();
+                setLoggedIn(refreshed);
+                if (refreshed){
+                    navigation.navigate('Home', {name: 'Home'});
+                }
+            }
+        };
+        handleLogin();
+    }, []);
+
+    return (
+        <View style = {styles.loginContainer}>
+        <CustomBox style = {loginBox}>
+            <CustomText style = {styles.heading}>Login</CustomText>
+            <TextInput
+                placeholder="User Name"
+                value={username}
+                onChangeText={text => setUserName(text)}
+                style={styles.textInput}
+                placeholderTextColor="#888"
+            />
+            <TextInput
+                placeholder="Password"
+                value={password}
+                onChangeText={text => setPassword(text)}
+                style={styles.textInput}
+                placeholderTextColor="#888"
+                secureTextEntry
+            />
+        </CustomBox>
+            <Button onPressIn = {() => Login()} style = {styles.button}>
+                <CustomBox style = {buttonBox}>
+                    <CustomText style = {{textAlign: 'center'}}>Login</CustomText>
+                </CustomBox>
+            </Button>
+            <Button onPressIn = {() => SignUp()} style = {styles.button}>
+                <CustomBox style = {buttonBox}>
+                    <CustomText style = {{textAlign: 'center'}}>SignUp</CustomText>
+                </CustomBox>
+            </Button>
+        </View>
+    );
 };
 
 export default Login;

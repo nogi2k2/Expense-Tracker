@@ -14,6 +14,35 @@ const SignUp = (navigation) => {
     const [password, setPassword] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
 
+    const SignUp = async () => {
+        try{
+            const response = await fetch("http://localhost:9898/auth/v1/singup", {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({
+                    'first_name': firstName,
+                    'last_name': lastName,
+                    'email': email,
+                    'user_name': userName,
+                    'password': password,
+                    'phone_number': phoneNumber,
+                }),
+            });
+            if (response.ok){
+                const data = await response.json();
+                await AsyncStorage.setItem("accessToken", data['accessToken']);
+                await AsyncStorage.setItem("token", data['token']);
+                navigation.navigate('Home', {name: 'Home'});
+            }
+        }catch (error){
+            console.error('Error during sign up:', error);
+        }
+    }
+
     const Login = () => {
         navigation.navigate('Login', {name: 'Login'});
     }
