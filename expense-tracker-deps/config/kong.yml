@@ -15,11 +15,11 @@ services:
         config:
           auth_service_url: "http://host.docker.internal:9898/auth/v1/ping"
 
-    - name: auth-service
-      url: http://host.docker.internal:9898
-      routes:
-        - name: auth-route
-          paths:
-            - /authv/v1
-          strip_path: false
-          preserve_host: false
+  - name: auth-service
+    url: http://host.docker.internal:9898
+    routes:
+      - name: auth-route
+        paths:
+          - /auth/v1
+        strip_path: false
+        preserve_host: false
