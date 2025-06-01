@@ -325,7 +325,7 @@ The Expense Tracker App adopts a modular, microservices-based architecture featu
 **React Native TypeScript signup page with user registration form and validation.**
 
 <p align="center">
-<img src="readme_refs/react_signup.jpg" style="max-width: 400px; width: 100%;" alt="React SignUp" alt="React SignUp">
+<img src="readme_refs/react_signup.jpg" width="200" alt="React SignUp">
 </p>
 
 ### 📝 User Sign-Up Request 
@@ -353,7 +353,7 @@ The Expense Tracker App adopts a modular, microservices-based architecture featu
 **React Native TypeScript login page providing a clean, native mobile experience for user authentication.**
 
 <p align="center">
-<img src="readme_refs/react_login.jpg" style="max-width: 400px; width: 100%;" alt="React Login" alt="React Login">
+<img src="readme_refs/react_login.jpg" width="200" alt="React Login">
 </p>
 
 ### 🔐 User Login Request
@@ -396,14 +396,12 @@ The Expense Tracker App adopts a modular, microservices-based architecture featu
 > ⚙️ **Note:**  
             - Pull the prebuilt docker images from Docker Hub:
 
-                    ```
                     • nogi2k2/expense-tracker-services:auth-service
                     • nogi2k2/expense-tracker-services:user-service
                     • nogi2k2/expense-tracker-services:expense-service
                     • nogi2k2/expense-tracker-services:ds-service
-                    ```
 
->           - Or reference them directly in your Docker Compose configuration
+>   Or reference them directly in your Docker Compose configuration
 
 2. **Verify Container Status:**
     ```
