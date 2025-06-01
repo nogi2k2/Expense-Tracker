@@ -18,7 +18,7 @@ const Login = ({navigation}) => {
     }
 
     const Login = async () => {
-        const response = await fetch("http://localhost:9898/auth/v1/login", {
+        const response = await fetch("http://192.168.237.128:8000/auth/v1/login", {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -40,7 +40,7 @@ const Login = ({navigation}) => {
 
     const isLoggedIn = async () => {
         const accessToken = await AsyncStorage.getItem('accessToken');
-        const response = await fetch('http://localhost:9898/ping', {
+        const response = await fetch('http://192.168.237.128:8000/ping', {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
@@ -54,7 +54,7 @@ const Login = ({navigation}) => {
 
     const refreshToken = async ()=> {
         const refreshToken = await AsyncStorage.getItem('token');
-        const response = await fetch("http://localhost:9898/auth/v1/refreshToken", {
+        const response = await fetch("http://192.168.237.128:8000/auth/v1/refreshToken", {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

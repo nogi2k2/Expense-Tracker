@@ -16,7 +16,7 @@ const SignUp = (navigation) => {
 
     const SignUp = async () => {
         try{
-            const response = await fetch("http://localhost:9898/auth/v1/singup", {
+            const response = await fetch("http://192.168.237.128:8000/auth/v1/singup", {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
